@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DERiiLNAY MATH LIVE</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #050713;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  text-align: center;
+  padding: 22px 10px;
+  background: linear-gradient(120deg,#080d27,#241052);
+  border-bottom: 2px solid #00eaff;
+}
+
+header h1 {
+  margin: 0;
+  color: #00eaff;
+  font-size: 25px;
+  text-shadow: 0 0 15px #00eaff;
+}
+
+header p {
+  color: #bd9cff;
+  font-size: 12px;
+  letter-spacing: 3px;
+}
+
+.container {
+  padding: 15px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.live-screen {
+  background: linear-gradient(145deg,#101a36,#170d31);
+  border: 2px solid #8c39ff;
+  border-radius: 18px;
+  padding: 25px 12px;
+  text-align: center;
+  box-shadow: 0 0 20px #6020aa55;
+}
+
+.live-label {
+  color: #ff3c75;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.level {
+  color: #00eaff;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.question {
+  font-size: clamp(32px,9vw,55px);
+  font-weight: bold;
+  margin: 28px 0;
+  color: white;
+  text-shadow: 0 0 15px #00cfff;
+  overflow-wrap: anywhere;
+}
+
+.timer {
+  font-size: 40px;
+  color: #ffe600;
+  font-weight: bold;
+}
+
+.answer {
+  display: none;
+  color: #00ff99;
+  font-size: 25px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.control {
+  background: #10162b;
+  border: 1px solid #263c68;
+  border-radius: 15px;
+  margin-top: 18px;
+  padding: 18px;
+}
+
+.control h3 {
+  color: #00eaff;
+  text-align: center;
+}
+
+button, select, input {
+  width: 100%;
+  padding: 13px;
+  margin: 6px 0;
+  border-radius: 9px;
+  border: 1px solid #00d9ff;
+  background: #101c35;
+  color: white;
+  font-size: 15px;
+}
+
+button {
+  background: linear-gradient(100deg,#075cba,#7928ca);
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+.next {
+  background: linear-gradient(100deg,#00a878,#006bce);
+}
+
+.reveal {
+  background: linear-gradient(100deg,#b42d9b,#6624c9);
+}
+
+.score {
+  text-align: center;
+  color: #ffe600;
+  font-size: 22px;
+  margin: 12px;
+}
+
+footer {
+  text-align: center;
+  color: #687b9e;
+  padding: 20px;
+  font-size: 11px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>DERiiLNAY MATH LIVE</h1>
+  <p>MATHEMATICS CHALLENGE</p>
+</header>
+
+<div class="container">
+
+  <section class="live-screen">
+    <div class="live-label">● LIVE CHALLENGE</div>
+
+    <div class="level" id="level">
+      LEVEL 01 - EASY
+    </div>
+
+    <div class="question" id="question">
+      15 × 8 = ?
+    </div>
+
+    <div class="timer" id="timer">20</div>
+    <div class="answer" id="answer"></div>
+    <div id="status">JAWAB DI KOMENTAR!</div>
+  </section>
+
+  <section class="control">
+    <h3>HOST CONTROL PANEL</h3>
+
+    <button onclick="startTimer()">▶ MULAI TIMER</button>
+
+    <button class="reveal" onclick="showAnswer()">
+      LIHAT JAWABAN
+    </button>
+
+    <button class="next" onclick="nextQuestion()">
+      SOAL BERIKUTNYA →
+    </button>
+
+    <button onclick="resetTimer()">
+      RESET TIMER
+    </button>
+
+    <select id="difficulty" onchange="nextQuestion()">
+      <option value="easy">Mudah</option>
+      <option value="medium">Menengah</option>
+      <option value="hard">Sulit</option>
+      <option value="extreme">Ekstrem</option>
+    </select>
+  </section>
+
+  <section class="control">
+    <h3>PARTICIPANT SCORE</h3>
+
+    <input id="player" placeholder="Nama peserta">
+
+    <button onclick="addScore()">+ TAMBAH 10 POIN</button>
+
+    <div class="score" id="score">
+      TOTAL SKOR: 0
+    </div>
+
+    <div id="playerList"></div>
+  </section>
+
+</div>
+
+<footer>
+  DERiiLNAY DIGITAL PROJECT © 2026
+</footer>
+
+<script>
+const questions = {
+  easy: [
+    {q:"15 × 8 = ?",a:120},
+    {q:"144 ÷ 12 = ?",a:12},
+    {q:"25² = ?",a:625},
+    {q:"125 + 275 = ?",a:400}
+  ],
+  medium: [
+    {q:"35 × 24 = ?",a:840},
+    {q:"√2025 = ?",a:45},
+    {q:"15% dari 800 = ?",a:120},
+    {q:"12³ = ?",a:1728}
+  ],
+  hard: [
+    {q:"125 × 48 = ?",a:6000},
+    {q:"√1764 = ?",a:42},
+    {q:"2⁸ + 2⁵ = ?",a:288},
+    {q:"75% dari 1240 = ?",a:930}
+  ],
+  extreme: [
+    {q:"999 × 999 = ?",a:998001},
+    {q:"125³ = ?",a:1953125},
+    {q:"2¹⁰ × 2⁵ = ?",a:32768},
+    {q:"√(144 × 225) = ?",a:180}
+  ]
+};
+
+let current = 0;
+let seconds = 20;
+let interval = null;
+let totalScore = 0;
+let participants = {};
+
+function getQuestions() {
+  return questions[document.getElementById("difficulty").value];
+}
+
+function displayQuestion() {
+  const list = getQuestions();
+  current = current % list.length;
+
+  document.getElementById("question").textContent = list[current].q;
+  document.getElementById("answer").style.display = "none";
+  document.getElementById("answer").textContent = "";
+  document.getElementById("status").textContent = "JAWAB DI KOMENTAR!";
+  document.getElementById("level").textContent =
+    "LEVEL - " + document.getElementById("difficulty").value.toUpperCase();
+
+  resetTimer();
+}
+
+function nextQuestion() {
+  current++;
+  displayQuestion();
+}
+
+function showAnswer() {
+  const result = getQuestions()[current];
+  document.getElementById("answer").textContent =
+    "JAWABAN: " + result.a;
+
+  document.getElementById("answer").style.display = "block";
+  document.getElementById("status").textContent = "PEMBAHASAN JAWABAN";
+  clearInterval(interval);
+}
+
+function resetTimer() {
+  clearInterval(interval);
+  seconds = 20;
+  document.getElementById("timer").textContent = seconds;
+}
+
+function startTimer() {
+  clearInterval(interval);
+
+  if (seconds <= 0) seconds = 20;
+
+  interval = setInterval(() => {
+    seconds--;
+    document.getElementById("timer").textContent = seconds;
+
+    if (seconds <= 0) {
+      clearInterval(interval);
+      document.getElementById("status").textContent = "WAKTU HABIS!";
+    }
+  },1000);
+}
+
+function addScore() {
+  const name = document.getElementById("player").value.trim();
+
+  if (!name) {
+    alert("Masukkan nama peserta!");
+    return;
+  }
+
+  participants[name] = (participants[name] || 0) + 10;
+  totalScore += 10;
+
+  document.getElementById("score").textContent =
+    "TOTAL SKOR: " + totalScore;
+
+  renderPlayers();
+}
+
+function renderPlayers() {
+  const list = document.getElementById("playerList");
+
+  list.innerHTML = "";
+
+  Object.entries(participants)
+    .sort((a,b) => b[1] - a[1])
+    .forEach(([name,score]) => {
+      const item = document.createElement("div");
+      item.style.padding = "8px";
+      item.textContent = name + " : " + score + " POIN";
+      list.appendChild(item);
+    });
+}
+
+displayQuestion();
+</script>
+
+</body>
+</html>
