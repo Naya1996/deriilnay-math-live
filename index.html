@@ -381,7 +381,33 @@ function addScore() {
 
   renderPlayers();
 }
+function renderPlayers() {
+  const list = document.getElementById("playerList");
+  const ranking = document.getElementById("rankingList");
 
+  list.innerHTML = "";
+  ranking.innerHTML = "";
+
+  const sortedPlayers = Object.entries(participants)
+    .sort((a, b) => b[1] - a[1]);
+
+  sortedPlayers.forEach(([name, score], index) => {
+    const item = document.createElement("div");
+    item.style.padding = "8px";
+    item.textContent = name + " : " + score + " POIN";
+    list.appendChild(item);
+
+    const rank = document.createElement("p");
+    rank.textContent =
+      (index + 1) + ". " + name + " — " + score + " POIN";
+
+    ranking.appendChild(rank);
+  });
+
+  if (sortedPlayers.length === 0) {
+    ranking.innerHTML = "<p>Belum ada peserta.</p>";
+  }
+}
 displayQuestion();
   
 function toggleLiveMode() {
