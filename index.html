@@ -382,21 +382,6 @@ function addScore() {
   renderPlayers();
 }
 
-function renderPlayers() {
-  const list = document.getElementById("playerList");
-
-  list.innerHTML = "";
-
-  Object.entries(participants)
-    .sort((a,b) => b[1] - a[1])
-    .forEach(([name,score]) => {
-      const item = document.createElement("div");
-      item.style.padding = "8px";
-      item.textContent = name + " : " + score + " POIN";
-      list.appendChild(item);
-    });
-}
-
 displayQuestion();
   
 function toggleLiveMode() {
