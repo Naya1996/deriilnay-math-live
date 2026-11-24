@@ -365,6 +365,19 @@ function renderPlayers() {
 }
 
 displayQuestion();
+  
+function toggleLiveMode() {
+  document.body.classList.toggle("live-mode");
+
+  const button = document.getElementById("hostToggle");
+
+  if (document.body.classList.contains("live-mode")) {
+    button.textContent = "⚙️ BUKA PANEL HOST";
+  } else {
+    button.textContent = "🎮 AKTIFKAN LIVE MODE";
+  }
+}
+
 </script>
 
 </body>
