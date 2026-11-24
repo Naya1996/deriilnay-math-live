@@ -382,6 +382,32 @@ function toggleLiveMode() {
     button.textContent = "🎮 AKTIFKAN LIVE MODE";
   }
 }
+ 
+function toggleFullscreen() {
+  const btn = document.getElementById("fullscreenBtn");
+
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen()
+      .then(() => {
+        btn.textContent = "⛶ KELUAR FULLSCREEN";
+      })
+      .catch(() => {
+        alert("Fullscreen tidak didukung browser ini.");
+      });
+  } else {
+    document.exitFullscreen();
+    btn.textContent = "⛶ FULLSCREEN";
+  }
+}
+
+document.addEventListener("fullscreenchange", () => {
+  const btn = document.getElementById("fullscreenBtn");
+
+  btn.textContent = document.fullscreenElement
+    ? "⛶ KELUAR FULLSCREEN"
+    : "⛶ FULLSCREEN";
+});
+ 
 
 </script>
 
