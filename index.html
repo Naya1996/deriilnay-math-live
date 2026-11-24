@@ -374,11 +374,26 @@ function addScore() {
     return;
   }
 
-  participants[name] = (participants[name] || 0) + 10;
-  totalScore += 10;
+  playerStreak[name] = (playerStreak[name] || 0) + 1;
+
+  let bonus = 0;
+
+  if (playerStreak[name] === 2) bonus = 5;
+  if (playerStreak[name] === 3) bonus = 10;
+  if (playerStreak[name] >= 4) bonus = 15;
+
+  const points = 10 + bonus;
+
+  participants[name] = (participants[name] || 0) + points;
+  totalScore += points;
 
   document.getElementById("score").textContent =
     "TOTAL SKOR: " + totalScore;
+
+  alert(
+    name + " mendapatkan " + points +
+    " poin!\n🔥 STREAK: " + playerStreak[name]
+  );
 
   renderPlayers();
 }
