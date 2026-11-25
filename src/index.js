@@ -33,19 +33,69 @@ export default {
       });
     }
 
-    // SOAL AKTIF: kunci jawaban tidak ditampilkan
-    if (url.pathname === "/api/quiz/current" && request.method === "GET") {
-      const quiz = await env.DB.prepare(
-        "SELECT question_id, question FROM quiz_state WHERE id = 1 AND is_active = 1"
-      ).first();
+    // TEST KONEKSI WEBSITE
+    if (url.pathname === "/api/test" && request.method === "POST") {
+      try {
+        const data = await request.json();
 
-      return respond({
-        success: true,
-        quiz: quiz || null
-      });
+        return respond({
+          success: true,
+          message: "Website berhasil terhubung ke server!",
+          received: data
+        });
+      } catch (error) {
+        return respond({
+          success: false,
+          message: "Data tidak valid"
+        }, 400);
+      }
     }
 
-    // ADMIN: MEMBUAT SOAL BARU
+    // TEST DATABASE KV
+    if (url.pathname === "/api/kv-test" && request.method === "GET") {
+      try {
+        await env.MATH_DATA.put(
+          "connection_test",
+          "DERIILNAY_KV_BERHASIL"
+        );
+
+        const result = await env.MATH_DATA.get("connection_test");
+
+        return respond({
+          success: result === "DERIILNAY_KV_BERHASIL",
+          message: "Pengujian database KV selesai",
+          database: result
+        });
+      } catch (error) {
+        return respond({
+          success: false,
+          message: "Database KV gagal diakses",
+          error: String(error)
+        }, 500);
+      }
+    }
+
+    // SOAL AKTIF
+    if (url.pathname === "/api/quiz/current" && request.method === "GET") {
+      try {
+        const quiz = await env.DB.prepare(
+          "SELECT question_id, question FROM quiz_state WHERE id = 1 AND is_active = 1"
+        ).first();
+
+        return respond({
+          success: true,
+          quiz: quiz || null
+        });
+      } catch (error) {
+        return respond({
+          success: false,
+          message: "Gagal mengambil soal",
+          error: String(error)
+        }, 500);
+      }
+    }
+
+    // ADMIN MEMBUAT SOAL
     if (url.pathname === "/api/admin/question" && request.method === "POST") {
       if (!env.ADMIN_TOKEN) {
         return respond({
@@ -63,7 +113,6 @@ export default {
 
       try {
         const data = await request.json();
-
         const question = String(data.question || "").trim();
         const answer = String(data.correct_answer || "").trim();
 
@@ -102,7 +151,7 @@ export default {
       }
     }
 
-    // PESERTA: MENGIRIM JAWABAN
+    // PESERTA MENGIRIM JAWABAN
     if (url.pathname === "/api/answer" && request.method === "POST") {
       try {
         const data = await request.json();
@@ -212,17 +261,25 @@ export default {
 
     // LEADERBOARD
     if (url.pathname === "/api/leaderboard" && request.method === "GET") {
-      const result = await env.DB.prepare(`
-        SELECT username, total_score, streak, correct_count
-        FROM player_stats
-        ORDER BY total_score DESC, correct_count DESC
-        LIMIT 20
-      `).all();
+      try {
+        const result = await env.DB.prepare(`
+          SELECT username, total_score, streak, correct_count
+          FROM player_stats
+          ORDER BY total_score DESC, correct_count DESC
+          LIMIT 20
+        `).all();
 
-      return respond({
-        success: true,
-        leaderboard: result.results
-      });
+        return respond({
+          success: true,
+          leaderboard: result.results
+        });
+      } catch (error) {
+        return respond({
+          success: false,
+          message: "Gagal mengambil leaderboard",
+          error: String(error)
+        }, 500);
+      }
     }
 
     return respond({
