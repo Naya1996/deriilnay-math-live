@@ -1,7 +1,20 @@
 
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "deriilnay-math-live",
+  "name": "deriilnay-math-live-worker",
   "main": "src/index.js",
-  "compatibility_date": "2026-11-24"
+  "compatibility_date": "2026-11-24",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "deriilnay_math_live",
+      "database_id": "2562cb59-0a3d-49b6-8019-2f88c746f617"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MATH_DATA",
+      "id": "c707ad55d686404f9f32c2e341bb0a7c"
+    }
+  ]
 }
